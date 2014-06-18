@@ -46,7 +46,6 @@ public class Reporter {
         return result;
     }
 
-    @FunctionalInterface
     public interface Tester<S> {
         void test(final Reporter context, final S subject);
     }

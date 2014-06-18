@@ -1,5 +1,6 @@
 package net.team33.building.mapping;
 
+import net.team33.building.Derivable;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,9 +18,11 @@ import static java.util.Collections.unmodifiableSet;
 
 public class MappedTest {
 
-    private static final String VALUE_01 = "a string";
+    private static final String A_STRING = "a string";
+    private static final String VALUE_01 = A_STRING;
+    private static final int VALUE_278 = 278;
 
-    static Builder builder(KEY... keys) {
+    private static Builder builder(final KEY... keys) {
         return new Builder(asList(keys));
     }
 
@@ -37,8 +40,8 @@ public class MappedTest {
     @Test
     public final void testSet_Map() {
         final Map<KEY, Object> origin = builder(KEY.STRING, KEY.INTEGER)
-                .set(KEY.STRING, "a string")
-                .set(KEY.INTEGER, 278)
+                .set(KEY.STRING, A_STRING)
+                .set(KEY.INTEGER, VALUE_278)
                 .asMap();
         Assert.assertEquals(
                 origin,
@@ -51,12 +54,12 @@ public class MappedTest {
     @Test
     public final void testReset_Map() {
         final Map<KEY, Object> expected = builder(KEY.STRING, KEY.INTEGER, KEY.DATE)
-                .set(KEY.STRING, "a string")
-                .set(KEY.INTEGER, 278)
+                .set(KEY.STRING, A_STRING)
+                .set(KEY.INTEGER, VALUE_278)
                 .asMap();
         final Map<KEY, Object> origin = builder(KEY.STRING, KEY.INTEGER)
-                .set(KEY.STRING, "a string")
-                .set(KEY.INTEGER, 278)
+                .set(KEY.STRING, A_STRING)
+                .set(KEY.INTEGER, VALUE_278)
                 .asMap();
         Assert.assertEquals(
                 expected,
@@ -124,47 +127,63 @@ public class MappedTest {
         }
     }
 
-    private static class Subject extends Mapped<KEY> {
+    private static class Subject extends Mapped.Immutable<KEY> implements Derivable<Subject, Builder> {
 
         private final Map<KEY, Object> backing;
 
         private Subject(final Map<? extends KEY, ?> template, final boolean ignoreOverhead) {
-            backing = unmodifiableMap(copy(template, template.keySet(), true, ignoreOverhead, new HashMap<>(0)));
+            // Want to use HashMap here for some testing purpose ...
+            // noinspection MapReplaceableByEnumMap
+            backing = unmodifiableMap(
+                    copy(template, template.keySet(), true, ignoreOverhead, new HashMap<KEY, Object>(0))
+            );
         }
 
         @Override
         public final Map<KEY, Object> asMap() {
+            // Already is immutable ...
+            // noinspection ReturnOfCollectionOrArrayField
             return backing;
+        }
+
+        @Override
+        public final Builder builder() {
+            return new Builder(asMap().keySet()).set(asMap());
         }
     }
 
-    @SuppressWarnings("ReturnOfThis")
-    private static class Builder extends Mutable<KEY, Builder> {
+    @SuppressWarnings({"ReturnOfThis", "ClassNameSameAsAncestorName"})
+    private static class Builder extends Mapped.Mutable<KEY, Builder>
+            implements net.team33.building.Builder<Subject> {
 
         private final Set<KEY> keys;
         private final Map<KEY, Object> backing;
 
         private Builder(final Collection<? extends KEY> keys) {
+            // Want to use HashSet here for some testing purpose ...
+            // noinspection SetReplaceableByEnumSet
             this.keys = unmodifiableSet(new HashSet<>(keys));
-            backing = Mapped.copy(Collections.EMPTY_MAP, this.keys, true, false, new HashMap<>(0));
+            // Want to use HashMap here for some testing purpose ...
+            // noinspection MapReplaceableByEnumMap
+            backing = copy(Collections.<KEY, Object>emptyMap(), this.keys, true, false, new HashMap<KEY, Object>(0));
         }
 
         @Override
         protected final Set<KEY> keySet() {
+            // Already is immutable ...
+            // noinspection ReturnOfCollectionOrArrayField
             return keys;
         }
 
         @Override
         public final Map<KEY, Object> asMap() {
+            // Intended to be mutable ...
+            // noinspection ReturnOfCollectionOrArrayField
             return backing;
         }
 
         @Override
-        protected Builder finallyThis() {
-            return this;
-        }
-
-        public Subject build() {
+        public final Subject build() {
             return new Subject(asMap(), true);
         }
     }

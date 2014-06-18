@@ -5,6 +5,7 @@ import net.team33.building.mapping.test.Reporter;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,8 @@ public class CombIteratorTest {
     private static final Map<Integer, List<Integer>> ORIGIN_02;
     private static final Map<Integer, List<Integer>> ORIGIN_03;
 
+    private static final List<Integer> EMPTY_INTEGER_LIST = Collections.emptyList();
+
     static {
         final Map<Integer, List<Integer>> origin01 = new TreeMap<>();
         origin01.put(1, asList(1, 2, 3));
@@ -32,7 +35,7 @@ public class CombIteratorTest {
 
         final Map<Integer, List<Integer>> origin02 = new TreeMap<>();
         origin02.put(1, asList(1, 2, 3));
-        origin02.put(2, asList());
+        origin02.put(2, EMPTY_INTEGER_LIST);
         origin02.put(3, asList(1, 2, 3));
 
         final Map<Integer, List<Integer>> origin03 = new TreeMap<>();
@@ -46,7 +49,7 @@ public class CombIteratorTest {
         ORIGIN_03 = unmodifiableMap(origin03);
     }
 
-    private static final Reporter.Tester<Map<Integer, Integer>> TESTER = (context, subject) -> context.report(subject);
+    private static final Reporter.Tester<Map<Integer, Integer>> TESTER = new ReportAnySubjectTester();
 
     private static Map.Entry entry(final Object key, final Object value) {
         return new SimpleEntry(key, value);
@@ -130,5 +133,12 @@ public class CombIteratorTest {
     @Test(expected = NullPointerException.class)
     public void testOriginContainsNull() {
         new CombIterator<>(ORIGIN_03);
+    }
+
+    private static class ReportAnySubjectTester implements Reporter.Tester<Map<Integer, Integer>> {
+        @Override
+        public void test(Reporter context, Map<Integer, Integer> subject) {
+            context.report(subject);
+        }
     }
 }

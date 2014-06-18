@@ -34,65 +34,50 @@ public class MappedData extends EnumMapped<MappedData.Property> {
         return get(Property.COUNTRY);
     }
 
-    static enum Property implements Key {
+    @SuppressWarnings("PublicInnerClass")
+    public enum Property implements Key {
 
-        NAME(false) {
-            @Override
-            public final Class<String> getValueClass() {
-                return String.class;
-            }
-
-            @Override
-            public final String getInitial() {
-                return "unknown";
-            }
-        },
-        FIRST_NAME(false) {
-            @Override
-            public final Class<String> getValueClass() {
-                return String.class;
-            }
-
-            @Override
-            public final String getInitial() {
-                return "unknown";
-            }
-        },
-        COUNTRY(false) {
-            @Override
-            public final Class<Country> getValueClass() {
-                return Country.class;
-            }
-
-            @Override
-            public final Country getInitial() {
-                return Country.ZZZ;
-            }
-        };
+        NAME(String.class, false, Constants.UNKNOWN),
+        FIRST_NAME(String.class, false, Constants.UNKNOWN),
+        COUNTRY(Country.class, false, Country.ZZZ);
 
         private final boolean nullable;
+        private final Class<?> valueClass;
+        private final Object initial;
 
-        Property(final boolean nullable) {
+        Property(final Class<?> valueClass, final boolean nullable, final Object initial) {
             this.nullable = nullable;
+            this.valueClass = valueClass;
+            this.initial = initial;
         }
 
         @Override
-        public boolean isNullable() {
+        public final boolean isNullable() {
             return nullable;
+        }
+
+        @Override
+        public final Class<?> getValueClass() {
+            return valueClass;
+        }
+
+        @Override
+        public final Object getInitial() {
+            return initial;
+        }
+
+        private static final class Constants {
+            private static final String UNKNOWN = "unknown";
         }
     }
 
+    @SuppressWarnings("PublicInnerClass")
     @XmlAccessorType(XmlAccessType.PROPERTY)
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     public static class Builder extends Mapper<Property, Builder> {
 
         private Builder() {
             super(Property.class);
-        }
-
-        @Override
-        protected final Builder finallyThis() {
-            return this;
         }
 
         public final MappedData build() {
@@ -118,7 +103,7 @@ public class MappedData extends EnumMapped<MappedData.Property> {
         }
 
         @XmlElement
-        public Country getCountry() {
+        public final Country getCountry() {
             return get(Property.COUNTRY);
         }
 
@@ -127,6 +112,7 @@ public class MappedData extends EnumMapped<MappedData.Property> {
         }
     }
 
+    @SuppressWarnings({"PackageVisibleInnerClass", "ClassNameSameAsAncestorName"})
     static class XmlAdapter extends javax.xml.bind.annotation.adapters.XmlAdapter<Builder, MappedData> {
         @Override
         public final MappedData unmarshal(final Builder v) throws Exception {

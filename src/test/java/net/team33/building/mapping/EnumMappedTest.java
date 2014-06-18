@@ -12,15 +12,19 @@ import static java.util.Arrays.asList;
 
 public class EnumMappedTest {
 
+    private static final String A_STRING = "a string";
+    private static final int VALUE_278 = 278;
+    private static final String SHOULD_CONTAIN_KEY = "<subject> should contain key <%s>";
+
     private static Builder builder(final KEY... keys) {
         return new Builder(asList(keys));
     }
 
     @Test
-    public void test_EnumMapped_Map() {
+    public final void test_EnumMapped_Map() {
         final Builder template = builder(KEY.STRING, KEY.INTEGER)
-                .set(KEY.STRING, "a string")
-                .set(KEY.INTEGER, 278);
+                .set(KEY.STRING, A_STRING)
+                .set(KEY.INTEGER, VALUE_278);
         final EnumMapped<KEY> subject = new EnumMapped<>(template);
         Assert.assertEquals(
                 template.asMap(),
@@ -29,7 +33,7 @@ public class EnumMappedTest {
     }
 
     @Test(expected = NoSuchElementException.class)
-    public void test_EnumMapped_Map__empty() {
+    public final void test_EnumMapped_Map__empty() {
         Assert.assertNull(
                 "Should not happen :-o",
                 new EnumMapped<>(builder())
@@ -37,15 +41,25 @@ public class EnumMappedTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void test_EnumMapped_Map__null() {
+    public final void test_EnumMapped_Map__null() {
+        //noinspection unchecked,rawtypes
         Assert.assertNull(
                 "Should not happen :-o",
-                new EnumMapped<KEY>(null)
+                new EnumMapped<KEY>((Map) null)
+        );
+    }
+
+    @Test(expected = NullPointerException.class)
+    public final void test_EnumMapped_Mapper__null() {
+        //noinspection unchecked,rawtypes
+        Assert.assertNull(
+                "Should not happen :-o",
+                new EnumMapped<KEY>((EnumMapped.Mapper) null)
         );
     }
 
     @Test
-    public void test_EnumMapped_Class_Map__Stuff_Empty() {
+    public final void test_EnumMapped_Class_Map__Stuff_Empty() {
         final EnumMapped<KEY> subject = new EnumMapped<>(new Builder(KEY.class));
         Assert.assertFalse(
                 "<subject> should not be empty",
@@ -53,7 +67,7 @@ public class EnumMappedTest {
         );
         for (final KEY key : KEY.values()) {
             Assert.assertTrue(
-                    "<subject> should contain key <" + key + ">",
+                    String.format(SHOULD_CONTAIN_KEY, key),
                     subject.asMap().containsKey(key)
             );
             Assert.assertEquals(
@@ -64,11 +78,11 @@ public class EnumMappedTest {
     }
 
     @Test
-    public void test_Mapper_Class() {
+    public final void test_Mapper_Class() {
         final Builder subject = new Builder(KEY.class);
         for (final KEY key : KEY.values()) {
             Assert.assertTrue(
-                    "<subject> should contain key <" + key + ">",
+                    String.format(SHOULD_CONTAIN_KEY, key),
                     subject.asMap().containsKey(key)
             );
             Assert.assertEquals(
@@ -79,10 +93,10 @@ public class EnumMappedTest {
     }
 
     @Test
-    public void test_EnumMapped_Class_Map() {
+    public final void test_EnumMapped_Class_Map() {
         final Map<KEY, Object> template = builder(KEY.STRING, KEY.INTEGER)
-                .set(KEY.STRING, "a string")
-                .set(KEY.INTEGER, 278)
+                .set(KEY.STRING, A_STRING)
+                .set(KEY.INTEGER, VALUE_278)
                 .asMap();
         final EnumMapped<KEY> subject = new EnumMapped<>(new Builder(KEY.class).set(template));
         Assert.assertTrue(
@@ -92,7 +106,7 @@ public class EnumMappedTest {
         for (final KEY key : KEY.values()) {
             if (!template.containsKey(key)) {
                 Assert.assertTrue(
-                        "<subject> should contain key <" + key + ">",
+                        String.format(SHOULD_CONTAIN_KEY, key),
                         subject.asMap().containsKey(key)
                 );
                 Assert.assertEquals(
@@ -143,11 +157,6 @@ public class EnumMappedTest {
 
         private Builder(final Class<KEY> keyClass) {
             super(keyClass);
-        }
-
-        @Override
-        protected final Builder finallyThis() {
-            return this;
         }
     }
 }

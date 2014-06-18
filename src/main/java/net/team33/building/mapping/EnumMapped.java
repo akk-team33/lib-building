@@ -12,18 +12,30 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.EnumSet.allOf;
 import static java.util.EnumSet.copyOf;
 
-public class EnumMapped<K extends Enum<K> & Key> extends Mapped<K> {
+/**
+ * @param <K>
+ */
+public class EnumMapped<K extends Enum<K> & Key> extends Mapped.Immutable<K> {
 
     private final Map<K, Object> backing;
 
     /**
-     * Initiates a new instance backed by a copy of a given {@code setter}.
+     * Initiates a new instance backed by an immutable copy of a given {@code mapper}.
      *
-     * @throws NullPointerException if the {@code setter} is {@code null}.
+     * @throws NullPointerException if the {@code mapper} is {@code null}.
      */
-    @SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
     protected EnumMapped(final Mapper<K, ?> mapper) {
-        backing = unmodifiableMap(new EnumMap<>(mapper.backing));
+        this(mapper.backing);
+    }
+
+    /**
+     * Initiates a new instance backed by an immutable copy of a given {@link Map}.
+     *
+     * @throws IllegalArgumentException if {@code origin} is empty and not an instance of {@link EnumMap}.
+     * @throws NullPointerException     if {@code origin} is {@code null}.
+     */
+    protected EnumMapped(final Map<K, ?> origin) {
+        backing = unmodifiableMap(new EnumMap<>(origin));
     }
 
     @Override
@@ -44,7 +56,7 @@ public class EnumMapped<K extends Enum<K> & Key> extends Mapped<K> {
     public abstract static class Mapper<K extends Enum<K> & Key, B extends Mapper<K, B>>
             extends Mutable<K, B> {
 
-        private final Set<K> keys;
+        private final Set<K> keySet;
         private final EnumMap<K, Object> backing;
 
         /**
@@ -62,7 +74,7 @@ public class EnumMapped<K extends Enum<K> & Key> extends Mapped<K> {
          * Initiates a new instance by a given {@code keySet} that will contain any possible key but {@code null},
          * associated with their {@linkplain Key#getInitial() default values}.
          *
-         * @param keySet The {@linkplain Class class representation} of the intended keys, not {@code null}.
+         * @param keySet The {@linkplain Class class representation} of the intended keySet, not {@code null}.
          * @throws NullPointerException     if {@code keySet} is or contains {@code null}.
          * @throws IllegalArgumentException if {@code keySet} is empty and not an instance of {@link EnumSet}.
          */
@@ -71,21 +83,19 @@ public class EnumMapped<K extends Enum<K> & Key> extends Mapped<K> {
         }
 
         /**
-         * @throws NullPointerException     if {@code keyClass} or {@code keySet} is or contains {@code null}.
-         * @throws IllegalArgumentException if {@code keySet} is empty and not an instance of {@link EnumSet}.
+         * @throws NullPointerException     if {@code keyClass} or {@code keys} is or contains {@code null}.
+         * @throws IllegalArgumentException if {@code keys} is empty and not an instance of {@link EnumSet}.
          */
-        @SuppressWarnings("unchecked")
-        private Mapper(final Class<K> keyClass, final Collection<K> keySet) {
-            final Map<K, Object> emptyMap = Collections.emptyMap();
-            this.keys = unmodifiableSet(copyOf(keySet));
-            this.backing = copy(emptyMap, keys, true, true, new EnumMap<>(keyClass));
+        private Mapper(final Class<K> keyClass, final Collection<K> keys) {
+            keySet = unmodifiableSet(copyOf(keys));
+            backing = copy(Collections.<K, Object>emptyMap(), keySet, true, true, new EnumMap<>(keyClass));
         }
 
         @Override
         protected final Set<K> keySet() {
             // Already is immutable ...
             // noinspection ReturnOfCollectionOrArrayField
-            return keys;
+            return keySet;
         }
 
         @SuppressWarnings("CollectionDeclaredAsConcreteClass")

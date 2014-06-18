@@ -1,7 +1,7 @@
 package net.team33.building.mapping;
 
-import net.team33.building.mapping.jaxb.Report;
-import net.team33.building.mapping.jaxb.Reporter;
+import net.team33.building.test.Report;
+import net.team33.building.test.Reporter;
 import org.junit.Assert;
 import org.junit.Test;
 

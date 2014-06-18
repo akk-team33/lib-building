@@ -1,4 +1,4 @@
-package net.team33.building.mapping.jaxb;
+package net.team33.building.test;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;

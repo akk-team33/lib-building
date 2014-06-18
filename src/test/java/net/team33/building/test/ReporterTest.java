@@ -1,4 +1,4 @@
-package net.team33.building.mapping.jaxb;
+package net.team33.building.test;
 
 import org.junit.Test;
 

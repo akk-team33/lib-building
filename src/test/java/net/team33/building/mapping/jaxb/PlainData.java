@@ -10,10 +10,12 @@ import static net.team33.building.mapping.jaxb.MappedData.Property.COUNTRY;
 import static net.team33.building.mapping.jaxb.MappedData.Property.FIRST_NAME;
 import static net.team33.building.mapping.jaxb.MappedData.Property.NAME;
 
+@SuppressWarnings("UnusedDeclaration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 public class PlainData {
 
+    private static final String PLAIN_DATA_NAME_FIRST_NAME_COUNTRY = "PlainData(name(%s), firstName(%s), country=(%s)}";
     private String name;
     private String firstName;
     private Country country;
@@ -28,33 +30,33 @@ public class PlainData {
         this.country = country;
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
-    public void setName(final String name) {
+    public final void setName(final String name) {
         this.name = name;
     }
 
-    public String getFirstName() {
+    public final String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(final String firstName) {
+    public final void setFirstName(final String firstName) {
         this.firstName = firstName;
     }
 
-    public Country getCountry() {
+    public final Country getCountry() {
         return country;
     }
 
-    public void setCountry(final Country country) {
+    public final void setCountry(final Country country) {
         this.country = country;
     }
 
     @Override
-    public boolean equals(final Object o) {
-        return this == o || ((o instanceof PlainData) && equals_((PlainData) o));
+    public final boolean equals(final Object obj) {
+        return (this == obj) || ((obj instanceof PlainData) && equals_((PlainData) obj));
     }
 
     private boolean equals_(final PlainData other) {
@@ -64,7 +66,7 @@ public class PlainData {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         int result = Objects.hashCode(name);
         result = (31 * result) + Objects.hashCode(firstName);
         result = (31 * result) + Objects.hashCode(country);
@@ -72,7 +74,7 @@ public class PlainData {
     }
 
     @Override
-    public String toString() {
-        return String.format("PlainData(name(%s), firstName(%s), country=(%s)}", name, firstName, country);
+    public final String toString() {
+        return String.format(PLAIN_DATA_NAME_FIRST_NAME_COUNTRY, name, firstName, country);
     }
 }

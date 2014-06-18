@@ -1,6 +1,6 @@
 package net.team33.building.mapping;
 
-import net.team33.building.Derivable;
+import net.team33.building.Extractable;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -127,7 +127,7 @@ public class MappedTest {
         }
     }
 
-    private static class Subject extends Mapped.Immutable<KEY> implements Derivable<Subject, Builder> {
+    private static class Subject extends Mapped.Immutable<KEY> implements Extractable<Subject, Builder> {
 
         private final Map<KEY, Object> backing;
 
@@ -147,7 +147,7 @@ public class MappedTest {
         }
 
         @Override
-        public final Builder builder() {
+        public final Builder extract() {
             return new Builder(asMap().keySet()).set(asMap());
         }
     }

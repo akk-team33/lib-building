@@ -1,11 +1,12 @@
 package net.team33.building.mapping;
 
-import net.team33.building.mapping.test.Report;
-import net.team33.building.mapping.test.Reporter;
+import net.team33.building.mapping.jaxb.Report;
+import net.team33.building.mapping.jaxb.Reporter;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,12 +52,14 @@ public class CombIteratorTest {
 
     private static final Reporter.Tester<Map<Integer, Integer>> TESTER = new ReportAnySubjectTester();
 
+    @SuppressWarnings("rawtypes")
     private static Map.Entry entry(final Object key, final Object value) {
         return new SimpleEntry(key, value);
     }
 
+    @SuppressWarnings("rawtypes")
     private static Map map(final Map.Entry... entries) {
-        final Map result = new LinkedHashMap();
+        final Map result = new LinkedHashMap(entries.length);
         for (final Map.Entry entry : entries) {
             result.put(entry.getKey(), entry.getValue());
         }
@@ -64,8 +67,8 @@ public class CombIteratorTest {
     }
 
     @Test(expected = NoSuchElementException.class)
-    public void testNoMoreElement() throws Exception {
-        final CombIterator<Integer, Integer> subject = new CombIterator<>(ORIGIN_01);
+    public final void testNoMoreElement() {
+        final Iterator<Map<Integer, Integer>> subject = new CombIterator<>(ORIGIN_01);
         while (subject.hasNext()) {
             subject.next();
         }
@@ -74,7 +77,7 @@ public class CombIteratorTest {
     }
 
     @Test
-    public void testOriginIsNormal() {
+    public final void testOriginIsNormal() {
         Assert.assertEquals(
                 new Report(asList(
                         map(entry(1, 1), entry(2, 1), entry(3, 1)),
@@ -110,7 +113,7 @@ public class CombIteratorTest {
     }
 
     @Test
-    public void testOriginContainsEmpty() {
+    public final void testOriginContainsEmpty() {
         Assert.assertEquals(
                 Report.EMPTY,
                 Reporter.test(new CombIterator<>(ORIGIN_02), TESTER)
@@ -118,7 +121,7 @@ public class CombIteratorTest {
     }
 
     @Test
-    public void testOriginIsEmpty() {
+    public final void testOriginIsEmpty() {
         Assert.assertEquals(
                 Report.EMPTY,
                 Reporter.test(new CombIterator<>(ORIGIN_00), TESTER)
@@ -126,18 +129,20 @@ public class CombIteratorTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testOriginIsNull() {
+    public final void testOriginIsNull() {
+        // noinspection ResultOfObjectAllocationIgnored
         new CombIterator<>(null);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testOriginContainsNull() {
+    public final void testOriginContainsNull() {
+        // noinspection ResultOfObjectAllocationIgnored
         new CombIterator<>(ORIGIN_03);
     }
 
     private static class ReportAnySubjectTester implements Reporter.Tester<Map<Integer, Integer>> {
         @Override
-        public void test(Reporter context, Map<Integer, Integer> subject) {
+        public final void test(final Reporter context, final Map<Integer, Integer> subject) {
             context.report(subject);
         }
     }

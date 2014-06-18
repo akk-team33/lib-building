@@ -1,4 +1,4 @@
-package net.team33.building.mapping.test;
+package net.team33.building.mapping.jaxb;
 
 /**
  * Created by andi on 15.06.2014.

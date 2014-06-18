@@ -6,11 +6,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import static java.util.Collections.unmodifiableMap;
+
 public class CombIterator<K, V> implements Iterator<Map<K, V>> {
 
-    private final Map<? extends K, ? extends Iterable<? extends V>> origin;
+    private final Map<K, Iterable<? extends V>> origin;
     private final Map<K, Iterator<? extends V>> iterators;
-    private final HashMap<K, V> template;
+    private final Map<K, V> template;
 
     /**
      * @param origin An original map containing all intended values for each intended key.
@@ -19,20 +21,20 @@ public class CombIterator<K, V> implements Iterator<Map<K, V>> {
     public CombIterator(final Map<? extends K, ? extends Iterable<? extends V>> origin)
             throws NullPointerException, IllegalArgumentException {
 
+        // To be able to resume the iterators ...
+        this.origin = unmodifiableMap(new LinkedHashMap<>(origin));
+
         // Maps the keys to their relating iterators and prepares a template for the next result ...
         this.iterators = new HashMap<>(origin.size());
         this.template = new LinkedHashMap<>(origin.size());
-        for (final K key : origin.keySet()) {
-            resume(key, origin.get(key).iterator());
+        for (final Map.Entry<? extends K, ? extends Iterable<? extends V>> entry : this.origin.entrySet()) {
+            resume(entry.getKey(), entry.getValue().iterator());
         }
-
-        // To be able to resume the iterators ...
-        this.origin = origin;
     }
 
     @Override
     public final boolean hasNext() {
-        return (0 < origin.size()) && (template.size() == origin.size());
+        return (!origin.isEmpty()) && (template.size() == origin.size());
     }
 
     @Override

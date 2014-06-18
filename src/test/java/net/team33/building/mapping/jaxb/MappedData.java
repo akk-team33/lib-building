@@ -1,4 +1,4 @@
-package net.team33.building.mapping.test;
+package net.team33.building.mapping.jaxb;
 
 import net.team33.building.mapping.EnumMapped;
 import net.team33.building.mapping.Key;

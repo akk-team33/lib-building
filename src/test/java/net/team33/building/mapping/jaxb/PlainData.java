@@ -1,4 +1,4 @@
-package net.team33.building.mapping.test;
+package net.team33.building.mapping.jaxb;
 
 import javax.xml.bind.annotation.XmlAccessOrder;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -6,9 +6,9 @@ import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.util.Objects;
 
-import static net.team33.building.mapping.test.MappedData.Property.COUNTRY;
-import static net.team33.building.mapping.test.MappedData.Property.FIRST_NAME;
-import static net.team33.building.mapping.test.MappedData.Property.NAME;
+import static net.team33.building.mapping.jaxb.MappedData.Property.COUNTRY;
+import static net.team33.building.mapping.jaxb.MappedData.Property.FIRST_NAME;
+import static net.team33.building.mapping.jaxb.MappedData.Property.NAME;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)

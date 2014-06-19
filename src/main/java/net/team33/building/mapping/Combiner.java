@@ -1,7 +1,7 @@
 package net.team33.building.mapping;
 
+import net.team33.building.Branchable;
 import net.team33.building.Builder;
-import net.team33.building.Extractable;
 
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -12,7 +12,7 @@ import java.util.Set;
 public class Combiner<
         K extends Enum<K> & Key,
         B extends Mapped.Mutable<K, B> & Builder<R>,
-        R extends Mapped<K> & Extractable<R, B>,
+        R extends Mapped<K> & Branchable<R, B>,
         C extends Combiner<K, B, R, C>>
         implements Iterable<R> {
 
@@ -48,7 +48,7 @@ public class Combiner<
 
         @Override
         public final R next() {
-            return template.extract().set(inner.next()).build();
+            return template.branch().set(inner.next()).build();
         }
 
         @Override

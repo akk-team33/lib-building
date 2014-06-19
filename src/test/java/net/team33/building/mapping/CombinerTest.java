@@ -1,6 +1,6 @@
 package net.team33.building.mapping;
 
-import net.team33.building.Extractable;
+import net.team33.building.Branchable;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -56,13 +56,13 @@ public class CombinerTest {
         }
     }
 
-    private static class Data extends EnumMapped<Key> implements Extractable<Data, Builder> {
+    private static class Data extends EnumMapped<Key> implements Branchable<Data, Builder> {
         private Data(final Mapper<Key, ?> mapper) {
             super(mapper);
         }
 
         @Override
-        public final Builder extract() {
+        public final Builder branch() {
             return new Builder().set(asMap());
         }
     }
